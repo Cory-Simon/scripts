@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+remote = %x(git remote get-url origin)
+if remote.include? 'bitbucket'
+	remote = remote.gsub(':', '/').gsub('git@', 'http://')
+end
+
+puts remote	
+%x(open #{remote})
