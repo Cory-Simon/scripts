@@ -2,8 +2,16 @@
 
 remote = %x(git remote get-url origin)
 if remote.include? 'bitbucket'
-	remote = remote.gsub(':', '/').gsub('git@', 'http://')
+	remote = remote.gsub(':', '/').gsub('git@', 'http://').chomp.chomp(".git").concat('/branch/')
+else
+	remote = remote.chomp.chomp('.git').concat('/tree/')
 end
-
+branches = %x(git branch).split(' ')
+current_branch = ''
+branches.each_with_index do |branch, index|
+	current_branch =  branches[index + 1] if branch.include?('*')
+end
+puts current_branch
+remote = "#{remote}#{current_branch}"
 puts remote	
 %x(open #{remote})
