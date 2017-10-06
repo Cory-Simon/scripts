@@ -1,11 +1,16 @@
 #!/usr/bin/env ruby
 
 remote = %x(git remote get-url origin)
-if remote.include? 'bitbucket'
-	remote = remote.gsub(':', '/').gsub('git@', 'http://').chomp.chomp(".git").concat('/branch/')
-else
-	remote = remote.chomp.chomp('.git').concat('/tree/')
+if remote.start_with? 'git@'
+	remote = remote.gsub(':', '/').gsub('git@', 'http://').chomp.chomp(".git")
 end
+
+if remote.include? 'bitbucket'
+	remote = remote.concat('/branch')
+else
+	remote = remote.concat('/tree/')
+end
+
 branches = %x(git branch).split(' ')
 current_branch = ''
 branches.each_with_index do |branch, index|
